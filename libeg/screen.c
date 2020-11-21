@@ -2144,41 +2144,35 @@ egScreenShot (
         return;
     }
 
-    if (SelfRootDir != NULL) {
-        BaseDir = SelfRootDir;
+    if (SelfDir != NULL) {
+        BaseDir = SelfDir;
     }
     else {
-        SelfRootDir = LibOpenRoot (SelfLoadedImage->DeviceHandle);
-        if (SelfRootDir != NULL) {
-            BaseDir = SelfRootDir;
-        }
-        else {
-            Status = egFindESP (&BaseDir);
-            if (EFI_ERROR (Status)) {
-                SwitchToText (FALSE);
+        Status = egFindESP (&BaseDir);
+        if (EFI_ERROR (Status)) {
+            SwitchToText (FALSE);
 
-                ShowScreenStr = L"Error: Could not Find ESP for Screenshot";
+            ShowScreenStr = L"Error: Could not Find ESP for Screenshot";
 
-                refit_call2_wrapper (gST->ConOut->SetAttribute, gST->ConOut, ATTR_ERROR);
-                PrintUglyText ((CHAR16 *) ShowScreenStr, NEXTLINE);
-                refit_call2_wrapper (gST->ConOut->SetAttribute, gST->ConOut, ATTR_BASIC);
+            refit_call2_wrapper (gST->ConOut->SetAttribute, gST->ConOut, ATTR_ERROR);
+            PrintUglyText ((CHAR16 *) ShowScreenStr, NEXTLINE);
+            refit_call2_wrapper (gST->ConOut->SetAttribute, gST->ConOut, ATTR_BASIC);
 
-                #if REFIT_DEBUG > 0
-                MsgLog ("%s\n\n", ShowScreenStr);
-                #endif
+            #if REFIT_DEBUG > 0
+            MsgLog ("%s\n\n", ShowScreenStr);
+            #endif
 
-                HaltForKey();
-                SwitchToGraphics();
+            HaltForKey();
+            SwitchToGraphics();
 
-                return;
-            }
+            return;
         }
     }
 
     // Search for existing screen shot files; increment number to an unused value...
     ssNum = 001;
     do {
-       SPrint (Filename, 80, L"screenshot_%03d.bmp", ssNum++);
+       SPrint (Filename, 80, L"ScreenShot_%03d.bmp", ssNum++);
     } while (FileExists (BaseDir, Filename));
 
     // save to file on the ESP
