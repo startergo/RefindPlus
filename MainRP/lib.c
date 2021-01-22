@@ -1517,12 +1517,17 @@ ScanVolumes (
         AddPartitionTable (Volume);
         ScanVolume (Volume);
         if (UuidList) {
+           EFI_GUID ESPGuid = ESP_GUID_VALUE;
            UuidList[HandleIndex] = Volume->VolUuid;
+           // Deduplicate filesystem UUID so that we don't add duplicate entries for file systems
+           // that are part of RAID mirrors. Don't deduplicate ESP partitions though, since unlike
+           // normal file systems they are likely to all share the same volume UUID, and it is also
+           // unlikely that they are part of software RAID mirrors.
            for (i = 0; i < HandleIndex; i++) {
-              if ((CompareMem (&(Volume->VolUuid), &(UuidList[i]), sizeof (EFI_GUID)) == 0) &&
+              if (!GuidsAreEqual (&(Volume->PartTypeGuid), &ESPGuid) &&
+                  (CompareMem (&(Volume->VolUuid), &(UuidList[i]), sizeof (EFI_GUID)) == 0) &&
                   (CompareMem (&(Volume->VolUuid), &GuidNull, sizeof (EFI_GUID)) != 0)
               ) {
-                  // Duplicate filesystem UUID
                   Volume->IsReadable = FALSE;
               } // if
            } // for
@@ -1541,6 +1546,8 @@ ScanVolumes (
                 MsgLog ("\n");
             }
             CHAR16 *VolDesc = Volume->VolName;
+            CHAR16* VolGUID = GuidAsString(&Volume->VolUuid);
+            CHAR16* PartGUID = GuidAsString(&Volume->PartGuid);
             if (MyStrStr (VolDesc, L"whole disk Volume") != NULL) {
                 VolDesc = L"Whole Disk Volume";
             }
@@ -1578,7 +1585,9 @@ ScanVolumes (
                 VolDesc = L"ISO-9660 Volume";
             }
 
-            MsgLog ("Add to Collection:- '%s'", VolDesc);
+            MsgLog ("Add to Collection:- '%s' '%s' '%s' '%s'", VolDesc, Volume->PartName, VolGUID, PartGUID);
+            MyFreePool(VolGUID);
+            MyFreePool(PartGUID);
             ScannedOnce = TRUE;
         }
         #endif
