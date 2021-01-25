@@ -809,8 +809,18 @@ BltClearScreen (
               );
            } // if/elseif
            if (NewBanner) {
-              egFreeImage(Banner);
-              Banner = NewBanner;
+               // DA_TAG: Allow Pixel Data Memory Leak on Qemu
+               //         Somehow makes it work.
+               //         Needs Investigation.
+               //         See: sf.net/p/refind/discussion/general/thread/4dfcdfdd16/
+               if (egHasConsoleControl) {
+                   egFreeImage(Banner);
+               }
+               else {
+                   MyFreePool (Banner);
+               }
+
+               Banner = NewBanner;
            }
            MenuBackgroundPixel = Banner->PixelData[0];
         } // if Banner exists
@@ -841,7 +851,17 @@ BltClearScreen (
             if (GlobalConfig.ScreensaverTime != -1) {
                 BltImage(Banner, (UINTN) BannerPosX, (UINTN) BannerPosY);
             }
-            egFreeImage(Banner);
+
+            // DA_TAG: Allow Pixel Data Memory Leak on Qemu
+            //         Somehow makes it work.
+            //         Needs Investigation.
+            //         See: sf.net/p/refind/discussion/general/thread/4dfcdfdd16/
+            if (egHasConsoleControl) {
+                egFreeImage(Banner);
+            }
+            else {
+                MyFreePool (Banner);
+            }
         }
     }
     else { // not showing banner
