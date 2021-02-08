@@ -159,13 +159,26 @@
 #
 #suppress_verbose_apfs
 
+# Apple has partially enforced the use of the Pre-Boot Loader stored in the "PreBoot" partitions
+# of APFS volumes by requiring this to run the Mac OS Boot Loader in Mac OS v11.0 (Big Sur) when
+# SIP is enabled. Attempts to run the Mac OS 11.0 Boot Loader directly result in kernel panics
+# when SIP enabled. When this option is activated, RefindPlus will map Mac OS APFS volumes to
+# their respective "PreBoot" partitions which will be used to boot such Mac OS Instances and
+# the "PreBoot" partitions will be hidden from view. This feature also facilitates directly
+# booting FileVault encrypted volumes instead of requiring their "PreBoot" partitions.
+# NB: This is an experimental feature and it is still a work in progress.
+#
+# Inactive when commented out (Does not enforce APFS requirements)
+#
+#enforce_apfs
+
 # Prevent UEFI Windows 'Secure Boot' from writing to Apple NVRAM. When this option is active,
 # RefindPlus will prevent UEFI Windows Secure Boot from writing to the NVRAM on Apple Firmware
 # as this can lead to damage resulting in an inability to boot. Legacy Windows does not have
 # this issue and is recommended when running Windows on Apple Firmware.
 # This setting only applies when loading Windows on Apple Firmware.
 #
-# Inactive when commented out (Does not stop UEFI Windows from writing to Apple NVRAM)
+# Inactive when commented out (Does not prevent UEFI Windows writes to Apple NVRAM)
 #
 #protect_mac_nvram
 

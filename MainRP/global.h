@@ -201,6 +201,9 @@
 #define WINDOWS_RECOVERY_FILES  L"EFI\\Microsoft\\Boot\\LrsBootmgr.efi,Recovery:\\EFI\\BOOT\\bootx64.efi,Recovery:\\EFI\\BOOT\\bootia32.efi,\\EFI\\OEM\\Boot\\bootmgfw.efi"
 // Files that may be Mac OS recovery files
 #define MACOS_RECOVERY_FILES    L"com.apple.recovery.boot\\boot.efi"
+#define MACOSX_LOADER_DIR       L"System\\Library\\CoreServices"
+#define MACOSX_LOADER_PATH      ( MACOSX_LOADER_DIR L"\\boot.efi" )
+
 
 // Filename patterns that identify EFI boot loaders. Note that a single case (either L"*.efi" or
 // L"*.EFI") is fine for most systems; but Gigabyte's buggy Hybrid EFI does a case-sensitive
@@ -312,6 +315,33 @@ typedef struct {
    UINT32              FSType;
 } REFIT_VOLUME;
 
+typedef struct {
+    EFI_DEVICE_PATH     *DevicePath;
+    EFI_HANDLE          DeviceHandle;
+    EFI_FILE            *RootDir;
+    CHAR16              *VolName;
+    CHAR16              *PartName;
+    EFI_GUID            VolUuid;
+    EFI_GUID            PartGuid;
+    EFI_GUID            PartTypeGuid;
+    BOOLEAN             IsMarkedReadOnly;
+    EG_IMAGE            *VolIconImage;
+    EG_IMAGE            *VolBadgeImage;
+    UINTN               DiskKind;
+    BOOLEAN             HasBootCode;
+    CHAR16              *OSIconName;
+    CHAR16              *OSName;
+    BOOLEAN             IsMbrPartition;
+    UINTN               MbrPartitionIndex;
+    EFI_BLOCK_IO        *BlockIO;
+    UINT64              BlockIOOffset;
+    EFI_BLOCK_IO        *WholeDiskBlockIO;
+    EFI_DEVICE_PATH     *WholeDiskDevicePath;
+    MBR_PARTITION_INFO  *MbrPartitionTable;
+    BOOLEAN             IsReadable;
+    UINT32              FSType;
+} REFIT_PREBOOT_VOLUME;
+
 typedef struct _refit_menu_entry {
    CHAR16      *Title;
    UINTN       Tag;
@@ -377,6 +407,7 @@ typedef struct {
    BOOLEAN          DisableAMFI;
    BOOLEAN          SupplyAPFS;
    BOOLEAN          SuppressVerboseAPFS;
+   BOOLEAN          EnforceAPFS;
    BOOLEAN          ProtectMacNVRAM;
    BOOLEAN          AllowDuplicates;
    BOOLEAN          ShutdownAfterTimeout;
@@ -435,9 +466,12 @@ extern CHAR16            *SelfDirPath;
 extern REFIT_VOLUME      *SelfVolume;
 extern REFIT_VOLUME      **Volumes;
 
+extern REFIT_PREBOOT_VOLUME **PreBootVolumes;
+
 extern REFIT_CONFIG      GlobalConfig;
 
 extern UINTN             VolumesCount;
+extern UINTN             PreBootVolumesCount;
 
 extern EFI_GUID          gEfiLegacyBootProtocolGuid;
 extern EFI_GUID          gEfiGlobalVariableGuid;

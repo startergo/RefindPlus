@@ -114,11 +114,16 @@ CHAR16           *SelfDirPath;
 
 REFIT_VOLUME     *SelfVolume    = NULL;
 REFIT_VOLUME     **Volumes      = NULL;
+
+REFIT_PREBOOT_VOLUME **PreBootVolumes      = NULL;
+UINTN                PreBootVolumesCount   = 0;
+
 UINTN            VolumesCount   = 0;
 BOOLEAN          MediaCheck     = FALSE;
 BOOLEAN          ScannedOnce    = FALSE;
 BOOLEAN          SelfVolSet     = FALSE;
 BOOLEAN          SelfVolRun     = FALSE;
+
 extern EFI_GUID RefindPlusGuid;
 
 // Maximum size for disk sectors
@@ -1469,6 +1474,83 @@ ScanExtendedPartition (
     } // for
 } // VOID ScanExtendedPartition()
 
+// Adds *FullFileName as a Mac OS loader, if it exists.
+// Returns TRUE if the fallback loader is NOT a duplicate of this one,
+// FALSE if it IS a duplicate.
+STATIC
+BOOLEAN
+SetPreBootNames (
+    REFIT_VOLUME *Volume
+) {
+    UINTN PreBootIndex;
+
+    for (PreBootIndex = 0; PreBootIndex < PreBootVolumesCount; PreBootIndex++) {
+        if (GuidsAreEqual (
+                &(PreBootVolumes[PreBootIndex]->PartGuid),
+                &(Volume->PartGuid)
+            )
+        ) {
+            if (!(MyStriCmp (Volume->VolName, L"PreBoot")) &&
+                !(MyStriCmp (Volume->VolName, L"Recovery")) &&
+                !(MyStriCmp (Volume->VolName, L"Update")) &&
+                !(MyStriCmp (Volume->VolName, L"VM")) &&
+                (MyStrStr (Volume->VolName, L"APFS Container") == NULL)
+            ) {
+                if (FileExists (Volume->RootDir, MACOSX_LOADER_PATH)) {
+                    MyFreePool (PreBootVolumes[PreBootIndex]->VolName);
+                    PreBootVolumes[PreBootIndex]->VolName = AllocateZeroPool (256 * sizeof (UINT16));
+                    PreBootVolumes[PreBootIndex]->VolName = StrDuplicate (Volume->VolName);
+
+                    return TRUE;
+                }
+            }
+        }
+    } // for
+
+    return FALSE;
+} // VOID SetPreBootNames()
+
+STATIC
+VOID
+SetPrebootVolumes (
+    VOID
+) {
+    UINTN   i;
+    BOOLEAN SwapName     = FALSE;
+    BOOLEAN FoundPreboot = FALSE;
+
+    MyFreePool (PreBootVolumes);
+    PreBootVolumes      = NULL;
+    PreBootVolumesCount = 0;
+
+    for (i = 0; i < VolumesCount; i++) {
+        if (MyStriCmp (Volumes[i]->VolName, L"PreBoot")) {
+            FoundPreboot = TRUE;
+            AddListElement ((VOID ***) &PreBootVolumes, &PreBootVolumesCount, Volumes[i]);
+        }
+    }
+
+    if (FoundPreboot) {
+        #if REFIT_DEBUG > 0
+        MsgLog ("Cloak PreBoot Partitions:");
+        #endif
+        for (i = 0; i < VolumesCount; i++) {
+            SwapName = SetPreBootNames(Volumes[i]);
+            if (SwapName) {
+                #if REFIT_DEBUG > 0
+                MsgLog ("\n");
+                MsgLog ("  - Cloaked PreBoot Partition:- '%s'", Volumes[i]->VolName);
+                #endif
+                MyFreePool (Volumes[i]->VolName);
+                Volumes[i]->VolName = PoolPrint (L"Cloaked_SkipThis_%03d", i);
+            }
+        }
+        #if REFIT_DEBUG > 0
+        MsgLog ("\n\n");
+        #endif
+    }
+} // VOID SetPrebootVolumes()
+
 VOID
 ScanVolumes (
     VOID
@@ -1710,6 +1792,10 @@ ScanVolumes (
             MyFreePool (SectorBuffer2);
         }
     } // for
+
+    if (SelfVolRun && GlobalConfig.EnforceAPFS) {
+        SetPrebootVolumes();
+    }
 } // VOID ScanVolumes()
 
 VOID
