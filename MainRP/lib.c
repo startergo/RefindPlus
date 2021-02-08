@@ -1502,9 +1502,9 @@ SetPreBootNames (
                     PreBootVolumes[PreBootIndex]->VolName = StrDuplicate (Volume->VolName);
 
                     return TRUE;
-                }
-            }
-        }
+                } // if FileExists
+            } // if !MyStriCmp
+        } // if GuidsAreEqual
     } // for
 
     return FALSE;
@@ -1592,6 +1592,11 @@ ScanVolumes (
 
     // first pass: collect information about all handles
     ScannedOnce = FALSE;
+    if (SelfVolRun) {
+        #if REFIT_DEBUG > 0
+        MsgLog ("Collect Volumes:\n");
+        #endif
+    }
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
         Volume = AllocateZeroPool (sizeof (REFIT_VOLUME));
         Volume->DeviceHandle = Handles[HandleIndex];
@@ -1663,7 +1668,7 @@ ScanVolumes (
                 VolDesc = L"ISO-9660 Volume";
             }
 
-            MsgLog ("Add to Collection:- '%s'", VolDesc);
+            MsgLog ("  - Add to Collection:- '%s'", VolDesc);
             ScannedOnce = TRUE;
         }
         #endif

@@ -523,7 +523,7 @@ BdsLibConnectAllDriversToAllControllersEx (
 
         #if REFIT_DEBUG > 0
         if (EFI_ERROR (Status)) {
-            if (!FoundGOP) {
+            if (!FoundGOP && egHasConsoleControl) {
                 MsgLog ("INFO: Could Not Find Path to GOP on Any Device Handle\n\n");
             }
         }
@@ -588,7 +588,7 @@ BdsLibConnectAllDriversToAllControllers (
     EFI_STATUS Status;
 
     Status = BdsLibConnectAllDriversToAllControllersEx();
-    if (EFI_ERROR (Status) && ResetGOP && !ReLoaded) {
+    if (EFI_ERROR (Status) && ResetGOP && !ReLoaded && egHasConsoleControl) {
         ReLoaded = TRUE;
         Status = ApplyGOPFix();
 

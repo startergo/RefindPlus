@@ -787,10 +787,12 @@ static LOADER_ENTRY * AddLoaderEntry (
             else if (MyStrStr (VolDesc, L"ISO-9660 Volume") != NULL) {
                 VolDesc = L"ISO-9660 Volume";
             }
-            MsgLog ("  - Found '%s' on '%s'\n", TitleEntry, VolDesc);
+            MsgLog ("\n");
+            MsgLog ("  - Found '%s' on '%s'", TitleEntry, VolDesc);
         }
         else {
-            MsgLog ("  - Found %s:- '%s'\n", TitleEntry, Entry->LoaderPath);
+            MsgLog ("\n");
+            MsgLog ("  - Found %s:- '%s'", TitleEntry, Entry->LoaderPath);
         }
         #endif
 
@@ -1601,56 +1603,64 @@ ScanForBootloaders (
         switch (GlobalConfig.ScanFor[i]) {
             case 'm': case 'M':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan Manual:\n");
+                MsgLog ("\n");
+                MsgLog ("Scan Manual:");
                 #endif
 
                 ScanUserConfigured (GlobalConfig.ConfigFilename);
                 break;
             case 'i': case 'I':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan Internal:\n");
+                MsgLog ("\n");
+                MsgLog ("Scan Internal:");
                 #endif
 
                 ScanInternal();
                 break;
             case 'h': case 'H':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan Internal (Legacy):\n");
+                MsgLog ("\n");
+                MsgLog ("Scan Internal (Legacy):");
                 #endif
 
                 ScanLegacyInternal();
                 break;
             case 'e': case 'E':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan External:\n");
+                MsgLog ("\n");
+                MsgLog ("Scan External:");
                 #endif
 
                 ScanExternal();
                 break;
             case 'b': case 'B':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan External (Legacy):\n");
+                MsgLog ("\n");
+                MsgLog ("Scan External (Legacy):");
                 #endif
 
                 ScanLegacyExternal();
                 break;
             case 'o': case 'O':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan Optical:\n");
+                MsgLog ("\n");
+                MsgLog ("Scan Optical:");
                 #endif
 
                 ScanOptical();
                 break;
             case 'c': case 'C':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan Disc (Legacy):\n");
+                MsgLog ("\n");
+                MsgLog ("Scan Disc (Legacy):");
                 #endif
 
                 ScanLegacyDisc();
                 break;
             case 'n': case 'N':
                 #if REFIT_DEBUG > 0
-                MsgLog ("Scan Net Boot:\n");
+                MsgLog ("\n");
+                MsgLog ("Scan Net Boot:");
                 #endif
 
                 ScanNetboot();
@@ -1664,6 +1674,7 @@ ScanForBootloaders (
     else {
         // assign shortcut keys
         #if REFIT_DEBUG > 0
+        MsgLog ("\n\n");
         MsgLog ("Assign Keyboard Shortcut Keys:\n");
         #endif
 

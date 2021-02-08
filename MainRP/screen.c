@@ -245,8 +245,7 @@ SetupScreen (
             // scale icons up for HiDPI monitors if required
             if (GlobalConfig.ScaleUI == -1) {
                 #if REFIT_DEBUG > 0
-                MsgLog ("    * UI Scaling Disabled\n");
-                MsgLog ("    ** Maintain Icon Scale\n\n");
+                MsgLog ("    * UI Scaling Disabled ...Maintain Icon Scale\n\n");
                 #endif
             }
             else if ((GlobalConfig.ScaleUI == 1) || ScreenH >= HIDPI_MIN) {
@@ -267,8 +266,7 @@ SetupScreen (
             }
             else {
                 #if REFIT_DEBUG > 0
-                MsgLog ("    * LoDPI Monitor Detected\n");
-                MsgLog ("    ** Maintain Icon Scale\n\n");
+                MsgLog ("    * LoDPI Monitor Detected ...Maintain Icon Scale\n\n");                
                 #endif
             } // if
 
