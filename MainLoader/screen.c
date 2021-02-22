@@ -70,7 +70,7 @@ BOOLEAN AllowGraphicsMode;
 
 EG_PIXEL StdBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0 };
 EG_PIXEL MenuBackgroundPixel = { 0xbf, 0xbf, 0xbf, 0 };
-EG_PIXEL DarkBackgroundPixel = { 0x0, 0x0, 0x0, 0 };
+EG_PIXEL DarkBackgroundPixel = { 0x0,  0x0,  0x0,  0 };
 
 // general defines and variables
 static BOOLEAN GraphicsScreenDirty;
@@ -153,26 +153,37 @@ SetupScreen (
     #endif
 
     // Convert mode number to horizontal & vertical resolution values
-    if ((GlobalConfig.RequestedScreenWidth > 0) && (GlobalConfig.RequestedScreenHeight == 0)) {
-
+    if ((GlobalConfig.RequestedScreenWidth > 0) &&
+        (GlobalConfig.RequestedScreenHeight == 0)
+    ) {
         #if REFIT_DEBUG > 0
         MsgLog ("Get Resolution From Mode:\n");
         #endif
 
-        egGetResFromMode(&(GlobalConfig.RequestedScreenWidth), &(GlobalConfig.RequestedScreenHeight));
+        egGetResFromMode(
+            &(GlobalConfig.RequestedScreenWidth),
+            &(GlobalConfig.RequestedScreenHeight)
+        );
     }
 
     // Set the believed-to-be current resolution to the LOWER of the current
     // believed-to-be resolution and the requested resolution. This is done to
     // enable setting a lower-than-default resolution.
-    if ((GlobalConfig.RequestedScreenWidth > 0) && (GlobalConfig.RequestedScreenHeight > 0)) {
-
+    if (
+        (GlobalConfig.RequestedScreenWidth > 0) &&
+        (GlobalConfig.RequestedScreenHeight > 0)
+    ) {
         #if REFIT_DEBUG > 0
         MsgLog ("Sync Resolution:\n");
         #endif
 
-       ScreenW = (ScreenW < GlobalConfig.RequestedScreenWidth)  ? ScreenW : GlobalConfig.RequestedScreenWidth;
-       ScreenH = (ScreenH < GlobalConfig.RequestedScreenHeight) ? ScreenH : GlobalConfig.RequestedScreenHeight;
+        ScreenW = (ScreenW < GlobalConfig.RequestedScreenWidth)
+            ? ScreenW
+            : GlobalConfig.RequestedScreenWidth;
+
+        ScreenH = (ScreenH < GlobalConfig.RequestedScreenHeight)
+            ? ScreenH
+            : GlobalConfig.RequestedScreenHeight;
     }
 
     // Set text mode. If this requires increasing the size of the graphics mode, do so.
@@ -197,7 +208,7 @@ SetupScreen (
             #endif
 
             // Requested text mode forces us to use a bigger graphics mode
-            GlobalConfig.RequestedScreenWidth = ScreenW;
+            GlobalConfig.RequestedScreenWidth  = ScreenW;
             GlobalConfig.RequestedScreenHeight = ScreenH;
         } // if
 
@@ -207,7 +218,10 @@ SetupScreen (
             MsgLog ("Set to User Requested Screen Size:\n");
             #endif
 
-            egSetScreenSize(&(GlobalConfig.RequestedScreenWidth), &(GlobalConfig.RequestedScreenHeight));
+            egSetScreenSize(
+                &(GlobalConfig.RequestedScreenWidth),
+                &(GlobalConfig.RequestedScreenHeight)
+            );
             egGetScreenSize(&ScreenW, &ScreenH);
         } // if user requested a particular screen resolution
     }
@@ -307,7 +321,7 @@ SetupScreen (
         MsgLog ("      Switching to Text Mode\n\n");
         #endif
 
-        AllowGraphicsMode = FALSE;
+        AllowGraphicsMode     = FALSE;
         GlobalConfig.TextOnly = TRUE;
         SwitchToText(FALSE);
     }
@@ -339,7 +353,9 @@ SwitchToText (
     refit_call2_wrapper(gST->ConOut->EnableCursor, gST->ConOut, CursorEnabled);
 
     #if REFIT_DEBUG > 0
-    if (GraphicsModeOnEntry && (!AllowGraphicsMode || GlobalConfig.TextOnly)) {
+    if ((GraphicsModeOnEntry) &&
+        (!AllowGraphicsMode || GlobalConfig.TextOnly)
+    ) {
         MsgLog ("Determine Text Console Size:\n");
     }
     #endif
@@ -355,11 +371,13 @@ SwitchToText (
 
     if (EFI_ERROR (Status)) {
         // use default values on error
-        ConWidth = 80;
+        ConWidth  = 80;
         ConHeight = 25;
 
         #if REFIT_DEBUG > 0
-        if (GraphicsModeOnEntry && (!AllowGraphicsMode || GlobalConfig.TextOnly)) {
+        if ((GraphicsModeOnEntry) &&
+            (!AllowGraphicsMode || GlobalConfig.TextOnly)
+        ) {
             MsgLog (
                 "  Could Not Get Text Console Size ...Using Default: %dx%d\n\n",
                 ConHeight,
@@ -370,7 +388,9 @@ SwitchToText (
     }
     else {
         #if REFIT_DEBUG > 0
-        if (GraphicsModeOnEntry && (!AllowGraphicsMode || GlobalConfig.TextOnly)) {
+        if ((GraphicsModeOnEntry) &&
+            (!AllowGraphicsMode || GlobalConfig.TextOnly)
+        ) {
             MsgLog (
                 "  Text Console Size = %dx%d\n\n",
                 ConWidth,
@@ -472,7 +492,7 @@ TerminateScreen (
 ) {
     // clear text screen
     refit_call2_wrapper(gST->ConOut->SetAttribute, gST->ConOut, ATTR_BASIC);
-    refit_call1_wrapper(gST->ConOut->ClearScreen, gST->ConOut);
+    refit_call1_wrapper(gST->ConOut->ClearScreen,  gST->ConOut);
 
     // enable cursor
     refit_call2_wrapper(gST->ConOut->EnableCursor, gST->ConOut, TRUE);
@@ -487,7 +507,7 @@ DrawScreenHeader (
     // clear to black background
     egClearScreen(&DarkBackgroundPixel); // first clear in graphics mode
     refit_call2_wrapper(gST->ConOut->SetAttribute, gST->ConOut, ATTR_BASIC);
-    refit_call1_wrapper(gST->ConOut->ClearScreen, gST->ConOut); // then clear in text mode
+    refit_call1_wrapper(gST->ConOut->ClearScreen,  gST->ConOut); // then clear in text mode
 
     // paint header background
     refit_call2_wrapper(gST->ConOut->SetAttribute, gST->ConOut, ATTR_BANNER);
@@ -501,7 +521,7 @@ DrawScreenHeader (
     Print(L"RefindPlus - %s", Title);
 
     // reposition cursor
-    refit_call2_wrapper(gST->ConOut->SetAttribute, gST->ConOut, ATTR_BASIC);
+    refit_call2_wrapper(gST->ConOut->SetAttribute,      gST->ConOut, ATTR_BASIC);
     refit_call3_wrapper(gST->ConOut->SetCursorPosition, gST->ConOut, 0, 4);
 }
 
@@ -541,7 +561,10 @@ PrintUglyText (
     EG_PIXEL BGColor = COLOR_RED;
 
     if (Text) {
-        if (AllowGraphicsMode && MyStriCmp(L"Apple", gST->FirmwareVendor) && egIsGraphicsModeEnabled()) {
+        if (AllowGraphicsMode &&
+            MyStriCmp(L"Apple", gST->FirmwareVendor) &&
+            egIsGraphicsModeEnabled()
+        ) {
             egDisplayMessage(Text, &BGColor, PositionCode);
             GraphicsScreenDirty = TRUE;
         }
@@ -797,7 +820,7 @@ BltClearScreen (
            else if ((Banner->Width > ScreenW) || (Banner->Height > ScreenH)) {
               NewBanner = egCropImage(
                   Banner, 0, 0,
-                  (Banner->Width > ScreenW) ? ScreenW : Banner->Width,
+                  (Banner->Width > ScreenW)  ? ScreenW : Banner->Width,
                   (Banner->Height > ScreenH) ? ScreenH : Banner->Height
               );
           } // if GlobalConfig.BannerScale else if Banner->Width
@@ -891,7 +914,12 @@ BltImageAlpha (
     EG_IMAGE *CompImage;
 
     // compose on background
-    CompImage = egCreateFilledImage(Image->Width, Image->Height, FALSE, BackgroundPixel);
+    CompImage = egCreateFilledImage(
+        Image->Width,
+        Image->Height,
+        FALSE,
+        BackgroundPixel
+    );
     egComposeImage(CompImage, Image, 0, 0);
 
     // blit to screen and clean up
@@ -952,7 +980,7 @@ BltImageCompositeBadge (
 
      // initialize buffer with base image
      if (BaseImage != NULL) {
-         CompImage = egCopyImage(BaseImage);
+         CompImage   = egCopyImage(BaseImage);
          TotalWidth  = BaseImage->Width;
          TotalHeight = BaseImage->Height;
      }
@@ -974,7 +1002,7 @@ BltImageCompositeBadge (
 
      // place the badge image
      if (BadgeImage != NULL && CompImage != NULL &&
-         (BadgeImage->Width + 8) < CompWidth &&
+         (BadgeImage->Width + 8)  < CompWidth &&
          (BadgeImage->Height + 8) < CompHeight
      ) {
          OffsetX += CompWidth  - 8 - BadgeImage->Width;
@@ -986,12 +1014,9 @@ BltImageCompositeBadge (
      if (CompImage != NULL) {
          if (CompImage->HasAlpha) {
              egDrawImageWithTransparency(
-                 CompImage,
-                 NULL,
-                 XPos,
-                 YPos,
-                 CompImage->Width,
-                 CompImage->Height
+                 CompImage, NULL,
+                 XPos, YPos,
+                 CompImage->Width, CompImage->Height
              );
          }
          else {
