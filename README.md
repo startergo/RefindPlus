@@ -24,7 +24,12 @@ Once rEFInd is installed, replace the rEFInd efi with the RefindPlus efi. (Ensur
 
 While RefindPlus will function with the rEFInd configuration file, `refind.conf`, this should be replaced with the RefindPlus configuration file, `config.conf`, to configure the additonal options provided by RefindPlus.
 
-Note that if you run RefindPlus without activating the additonal RefindPlus options, as will be the case if using an unmodified rEFInd configuration file, RefindPlus will behave exactly as if you are running rEFInd. That is, the additonal RefindPlus options must be actively enabled if they are required.
+Note that if you run RefindPlus without activating the additonal RefindPlus options, as will be the case if using an unmodified rEFInd configuration file, RefindPlus will behave in an equivalent to if you are running rEFInd. That is, the additonal RefindPlus options must be actively enabled if they are required.
+
+Differences between rEFInd and the equivalent RefindPlus implementation as at rEFInd v0.13.0 are:
+- `use_nvram`: Deactivated by default. That is, RefindPlus variables are written to the `vars` folder by default when required instead of to the motherboard's NVRAM.
+- `resolution`: The `max` setting is ignored and the maximum available resolution is automatically used by default when required.
+- `log_level`: Ignored by RefindPlus as debug logs are provided by a dedicated debug build.
 
 A sample RefindPlus configuration file is provided here: [config.conf-sample](https://github.com/dakanji/RefindPlus/blob/GOPFix/config.conf-sample).
 
@@ -43,6 +48,7 @@ A sample RefindPlus configuration file is provided here: [config.conf-sample](ht
 - protect_mac_nvram
 - set_mac_boot_args
 - scale_ui
+- ignore_previous_boot
 
 ## Roll Your Own
 Refer to [BUILDING.md](https://github.com/dakanji/RefindPlus/blob/GOPFix/BUILDING.md) for build instructions (x64 Only).
