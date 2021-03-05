@@ -1839,6 +1839,7 @@ efi_main (
         switch (ChosenEntry->Tag) {
 
             case TAG_NVRAMCLEAN:    // Clean NVRAM
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
@@ -1897,6 +1898,7 @@ efi_main (
                 break;
 
             case TAG_SHOW_BOOTKICKER:    // Apple Boot Screen
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
@@ -1925,6 +1927,7 @@ efi_main (
                 break;
 
             case TAG_REBOOT:    // Reboot
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
@@ -1947,6 +1950,7 @@ efi_main (
                 break;
 
             case TAG_SHUTDOWN: // Shut Down
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
@@ -1985,6 +1989,8 @@ efi_main (
                 break;
 
             case TAG_LOADER:   // Boot OS via .EFI loader
+                ScreenLoaded = FALSE;
+
                 ourLoaderEntry = (LOADER_ENTRY *) ChosenEntry;
 
                 // Fix undetected Mac OS
@@ -2117,6 +2123,8 @@ efi_main (
                 break;
 
             case TAG_LEGACY:   // Boot legacy OS
+                ScreenLoaded = FALSE;
+
                 ourLegacyEntry = (LEGACY_ENTRY *) ChosenEntry;
 
                 #if REFIT_DEBUG > 0
@@ -2147,6 +2155,8 @@ efi_main (
                 break;
 
             case TAG_LEGACY_UEFI: // Boot a legacy OS on a non-Mac
+                ScreenLoaded = FALSE;
+
                 ourLegacyEntry = (LEGACY_ENTRY *) ChosenEntry;
 
                 #if REFIT_DEBUG > 0
@@ -2184,6 +2194,7 @@ efi_main (
                 break;
 
             case TAG_FIRMWARE_LOADER:  // Reboot to a loader defined in the EFI UseNVRAM
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
@@ -2210,6 +2221,7 @@ efi_main (
                 break;
 
             case TAG_EXIT:    // Terminate RefindPlus
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
@@ -2231,6 +2243,7 @@ efi_main (
                 break;
 
             case TAG_FIRMWARE: // Reboot into firmware's user interface
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
@@ -2256,6 +2269,7 @@ efi_main (
                 break;
 
             case TAG_INSTALL:
+                ScreenLoaded = FALSE;
 
                 #if REFIT_DEBUG > 0
                 MsgLog ("User Input Received:\n");
