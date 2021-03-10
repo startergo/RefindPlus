@@ -31,58 +31,79 @@ EFI_STATUS
 RpApfsConnectParentDevice (
     VOID
 ) {
-  EFI_STATUS       Status;
-  EFI_STATUS       XStatus;
-  UINTN            HandleCount;
-  EFI_HANDLE       *HandleBuffer;
-  EFI_DEVICE_PATH  *ParentDevicePath = NULL;
-  EFI_DEVICE_PATH  *ChildDevicePath;
-  UINTN            Index;
-  UINTN            PrefixLength = 0;
+    EFI_STATUS       Status;
+    EFI_STATUS       Status2;
+    UINTN            HandleCount;
+    EFI_HANDLE       *HandleBuffer;
+    EFI_DEVICE_PATH  *ParentDevicePath;
+    EFI_DEVICE_PATH  *ChildDevicePath;
+    UINTN            Index;
+    UINTN            PrefixLength;
 
-  HandleCount = 0;
-  Status = refit_call5_wrapper(
-      gBS->LocateHandleBuffer,
-      ByProtocol,
-      &gEfiBlockIoProtocolGuid,
-      NULL,
-      &HandleCount,
-      &HandleBuffer
-  );
+    HandleCount = 0;
+    Status = gBS->LocateHandleBuffer (
+        ByProtocol,
+        &gEfiBlockIoProtocolGuid,
+        NULL,
+        &HandleCount,
+        &HandleBuffer
+    );
 
-  if (!EFI_ERROR (Status)) {
-      Status = EFI_NOT_FOUND;
+    ParentDevicePath = NULL;
+    PrefixLength     = 0;
+    if (Handle != NULL) {
+        Status2 = gBS->HandleProtocol (
+            Handle,
+            &gEfiDevicePathProtocolGuid,
+            (VOID **) &ParentDevicePath
+        );
+        if (!EFI_ERROR (Status2)) {
+            PrefixLength = GetDevicePathSize (ParentDevicePath) - END_DEVICE_PATH_LENGTH;
+        }
+        else {
+            ParentDevicePath = NULL;
+        }
+    }
 
-      for (Index = 0; Index < HandleCount; ++Index) {
-          if (ParentDevicePath != NULL && PrefixLength > 0) {
-              XStatus = refit_call3_wrapper(
-                  gBS->HandleProtocol,
-                  HandleBuffer[Index],
-                  &gEfiDevicePathProtocolGuid,
-                  (VOID **) &ChildDevicePath
-              );
+    if (!EFI_ERROR (Status)) {
+        Status = EFI_NOT_FOUND;
 
-              if (EFI_ERROR (XStatus)) {
-                  continue;
-              }
+        for (Index = 0; Index < HandleCount; ++Index) {
+            if (ParentDevicePath != NULL) {
+                if (PrefixLength > 0) {
+                    Status2 = gBS->HandleProtocol (
+                        HandleBuffer[Index],
+                        &gEfiDevicePathProtocolGuid,
+                        (VOID **) &ChildDevicePath
+                    );
 
-              if (CompareMem (ParentDevicePath, ChildDevicePath, PrefixLength) != 0) {
-                  continue;
-              }
-          }
+                    if (EFI_ERROR (Status2)) {
+                        continue;
+                    }
 
-          XStatus = RpApfsConnectHandle (HandleBuffer[Index]);
-          if (XStatus == EFI_SUCCESS || XStatus == EFI_ALREADY_STARTED) {
-              if (EFI_ERROR (Status)) {
-                  Status = XStatus;
-              }
-          }
-      }
+                    if (CompareMem (ParentDevicePath, ChildDevicePath, PrefixLength) == 0) {
 
-      FreePool (HandleBuffer);
-  }
+                    }
+                    else {
+                        continue;
+                    }
+                }
+            }
 
-  return Status;
+            Status2 = OcApfsConnectHandle (
+                HandleBuffer[Index],
+                VerifyPolicy
+            );
+
+            if (!EFI_ERROR (Status2)) {
+                Status = Status2;
+            }
+        }
+
+        FreePool (HandleBuffer);
+    }
+
+    return Status;
 }
 
 EFI_STATUS
