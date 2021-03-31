@@ -1,6 +1,6 @@
 #
 # config.conf
-# Configuration file for the RefindPlus boot menu
+# Configuration file for the RefindPlus boot manager
 #
 
 ##--------------------------------------------------------------##
@@ -61,11 +61,11 @@
 #
 #provide_console_gop
 
-# When GOP drivers, which are UEFI 2.x drivers, are implemented according to the
-# associated UEFI 2.x Specs, they do not work on certain devices as the UEFI 2.x
-# Specs mandate that on installation, a GOP driver should check if the device is
-# UEFI 2.x compliant and fail if it is not. Hence, UEFI 2.x GOP implementation,
-# does not activate on Classic MacPros for instance, as these are not actually
+# When GOP drivers, which are UEFI 2.x drivers, are implemented in complinace with
+# UEFI 2.x requirements, they do not work on legacy devices as the specifications
+# mandate that on installation, compliant GOP drivers should confirm devices are
+# UEFI 2.x compliant and to fail if they are not. Hence, compliant GOP drivers
+# do not activate on Classic MacPros for instance, as these are not actually
 # UEFI 2.x devices but EFI 1.x devices to which Apple has added a chunk of, but
 # not all of, the UEFI 2.x capabilities. When this token is activated, RefindPlus
 # will temporarily amend the device EFI Revision to UEFI 2.x, emulate the UEFI 2.x
@@ -85,7 +85,7 @@
 # the Radeon VII and some versions of the Radeon 5700 XT. However,
 # this should only be used when there is an obvious benefit as it
 # may result in glitches in the pre-boot configuration screen or
-# slow scrolling response after booting into the operating system.
+# slow scrolling response on booting into the operating system.
 # NB: This functionality is only available on TianoCore Builds
 #
 # Inactive when commented out (Does not use the built-in GOP)
@@ -102,7 +102,7 @@
 #continue_on_warning
 
 # Force "TRIM" on non-Apple SSDs. "TRIM", which may improve SSD health,
-# is not enabled by default on non-Apple SSDs in Mac OS. When this option
+# is inactive by default for non-Apple SSDs in Mac OS. When this option
 # is active, RefindPlus will force Mac OS "TRIM" on for all SSDs types
 # including on non-Apple SSDs. This setting only applies to Mac OS. Note
 # that this setting will create a Mac OS NVRAM entry the first time it is
@@ -138,7 +138,7 @@
 #
 #disable_amfi
 
-# Supply APFS filesystem capability. When this option is active, RefindPlus will load
+# Supply APFS filesystem capability. When this option is active, RefindPlus loads
 # Mac OS APFS filesystem drivers, apfs.efi, which are available in system folders of
 # Mac OS 10.13 (High Sierra) and later. The drivers are loaded to match each specific
 # Mac OS version and this ensures that changes made by Apple to the drivers for different
@@ -151,7 +151,7 @@
 #supply_apfs
 
 # Suppress verbose APFS loading text output. When this option is active, RefindPlus will
-# suppress verbose text output from the APFS drivers loaded using the "supply_apfs" option.
+# suppress verbose text output from APFS drivers loaded via the "supply_apfs" option.
 # This option only acts on apfs drivers loaded by RefindPlus using "supply_apfs".
 # This option may impact other text output and should be disabled if such
 # negative effects are observed. This setting only applies to Mac OS.
@@ -185,8 +185,9 @@
 #
 #protect_nvram
 
-# Allow scans of multiple ESPs. When this option is active, RefindPlus will make other ESPs,
-# separate from that containing RefindPlus, available for scanning for kernels and loaders.
+# Allow scans of multiple ESPs. When this option is active, RefindPlus
+# will make other ESPs, separate from that containing RefindPlus,
+# available to be scanned for kernels and loaders.
 #
 # Inactive when commented out (Does not make other ESPs available)
 #
@@ -213,7 +214,7 @@
 #   0    - Take no Action
 #   1    - Always Enable SIP (and SSV, if on Mac OS 11.x)
 #
-# Takes no action on SIP and SSV when commented out
+# Inactive when commented out (Takes no action on SIP and SSV)
 #
 #active_csr 1
 
@@ -273,8 +274,8 @@
 #
 #use_nvram
 
-# Which non-bootloader tools to show on the tools line, and in what
-# order to display them:
+# Non-bootloader tools to show on the "tools" line
+# of the main menu and their display order:
 #  shell            - UEFI/EFI Shell. (External program; see documentation)
 #  memtest          - Memory Testing Utility. (External program; memtest86)
 #  gptsync          - the (dangerous) gptsync.efi utility (requires external
@@ -311,15 +312,15 @@
 #
 #showtools shell,bootorder,gdisk,memtest,mok_tool,apple_recovery,windows_recovery,about,hidden_tags,reboot,exit
 
-# Set the screen's video resolution. Pass this option either:
-#  * two values, corresponding to the X and Y resolutions
-#  * one value, corresponding to a GOP (UEFI) video mode
-# Note that not all resolutions are supported. On UEFI systems, passing
-# an incorrect value results in a message being shown on the screen to
-# that effect, along with a list of supported modes. On EFI 1.x systems
-# (e.g., Macintoshes), setting an incorrect mode silently fails. On both
-# types of systems, setting an incorrect resolution results in the default
-# resolution being used.
+# Set the screen's display resolution. Pass this option either:
+#       * two values, corresponding to the X and Y resolutions
+#       * one value, corresponding to a GOP (UEFI) video mode
+# Note that not all resolutions are supported. On UEFI 2.x systems,
+# passing an incorrect value results in a message being shown on the
+# screen to that effect, along with a list of supported modes. With
+# EFI 1.x systems, such as legacy Macs, setting an incorrect mode
+# silently fails. On both types of systems, setting an incorrect
+# resolution results in the default resolution being used.
 #
 # Uses the maximum screen resolution when commented out
 #
@@ -353,7 +354,8 @@
 # Normally, when the timeout period has passed, RefindPlus boots the
 # default_selection. If the following option is uncommented, though,
 # RefindPlus will instead attempt to shut down the computer.
-# CAUTION: MANY COMPUTERS WILL INSTEAD HANG OR REBOOT! Macs and more
+#
+# CAUTION: MANY COMPUTERS WILL HANG OR REBOOT INSTEAD! Macs and more
 # recent UEFI-based PCs are most likely to work with this feature.
 #
 # Boots the default selection when commented out
@@ -392,11 +394,11 @@
 # name is specified relative to the main RefindPlus binary's directory. If
 # an icon cannot be found in the specified directory, an attempt is made
 # to load it from the default directory; thus, you can replace just some
-# icons in your own directory and rely on the default for others.
-# Icon files may be in any supported format -- ICNS (*.icns), BMP (*.bmp),
-# PNG (*.png), or JPEG (*.jpg or *.jpeg); however, RefindPlus' BMP and JPEG
-# implementations do not support transparency, which is highly desirable
-# in icons.
+# icons in your own directory and rely on the default for others. Icon
+# files may be in any supported format -- ICNS (*.icns), BMP (*.bmp),
+# PNG (*.png), or JPEG (*.jpg or *.jpeg); however, RefindPlus' BMP
+# and JPEG implementations do not support transparency, which is
+# highly desirable in icons.
 #
 # Loads icons from the "icons" folder when commented out
 #
@@ -427,11 +429,10 @@
 #banner_scale fillscreen
 
 # Icon sizes. All icons are square, so just one value is specified. The
-# big icons are used for OS selectors in the first row and the small
-# icons are used for tools on the second row. Drive-type badges are 1/4
-# the size of the big icons. Legal values are 32 and above. If the icon
-# files do not hold icons of the proper size, the icons are scaled to
-# the specified size.
+# big icons are used for OS selectors in the first row and the small icons
+# are used for tools on the second row. Drive-type badges are 1/4 the size
+# of the big icons. Legal values are 32 and above. If the icon files do not
+# hold icons of the proper size, the icons are scaled to the specified size.
 #
 # Uses 48 and 128 for small and big icons respectively when commented out
 #
@@ -440,36 +441,35 @@
 
 # Custom images for the selection background. There is a big one (144 x 144)
 # for the OS icons, and a small one (64 x 64) for the function icons in the
-# second row. If only a small image is given, that one is also used for
-# the big icons by stretching it in the middle. If only a big one is given,
-# the built-in default will be used for the small icons. If an image other
-# than the optimal size is specified, it will be scaled in a way that may
-# be ugly.
+# second row. If only a small image is given, that one is also used for the
+# big icons by stretching it in the middle. If only a big one is given, the
+# built-in default will be used for the small icons. If an image other than
+# the optimal size is specified, it may be scaled in an ugly way.
 #
 # Like the banner option above, these options take a filename of an
-# uncompressed BMP, PNG, JPEG, or ICNS image file with a color depth of
-# 24, 8, 4, or 1 bits. The PNG or ICNS format is required if you need
-# transparency support (to let you "see through" to a full-screen banner).
+# uncompressed BMP, PNG, JPEG, or ICNS image file with a color depth
+# of 24, 8, 4, or 1 bits. The PNG or ICNS format is required for
+# transparency support.
 #
 #selection_big   selection-big.bmp
 #selection_small selection-small.bmp
 
 # Set the font to be used for all textual displays in graphics mode.
-# For best results, the font must be a PNG file with alpha channel
-# transparency. It must contain ASCII characters 32-126 (space through
-# tilde), inclusive, plus a glyph to be displayed in place of characters
-# outside of this range, for a total of 96 glyphs. Only monospaced fonts
-# are supported. Fonts may be of any size, although large fonts can
+# For the best results, The font used should be a PNG file with alpha
+# channel transparency. It must contain ASCII characters 32-126 (space
+# through tilde), inclusive, aswell as a glyph to be displayed in place
+# of characters outside this range (96 glyphs in total). Only monospaced
+# fonts are supported. Fonts may be of any size, although large fonts can
 # produce display irregularities.
 #
 # Uses the built-in font (Luxi Mono Regular 12 point) when commented out
 #
 #font myfont.png
 
-# Use text mode only. When enabled, this option forces RefindPlus into
-# text mode. Graphic mode is used otherwise.
+# Use text screen mode. When enabled, this option forces the RefindPlus
+# screen mode to text mode. Graphics screen mode is used otherwise.
 #
-# Uses graphics mode when commented out
+# Uses graphics screen mode when commented out
 #
 #textonly
 
@@ -482,7 +482,7 @@
 # you of valid modes.
 #
 # CAUTION: On VirtualBox, and perhaps on some real computers, specifying
-# a text mode and uncommenting the "textonly" option while NOT specifying
+# a text mode and uncommenting the "textonly" option without specifying
 # a resolution can result in an unusable display in the booted OS.
 #
 # Uses 1024 when commented out
@@ -650,36 +650,36 @@
 #dont_scan_dirs ESP:/EFI/boot,EFI/Dell,EFI/memtest86
 
 # Files that should NOT be included as EFI boot loaders (on the
-# first line of the display). If you are using a boot loader that
-# relies on support programs or drivers that are installed alongside
-# the main binary or if you want to "blacklist" certain loaders by
-# name rather than location, use this option. Note that this will
-# NOT prevent certain binaries from showing up in the second-row
-# set of tools. Most notably, various Secure Boot and recovery
-# tools are present in this list, but may appear as second-row
-# items.
-# The file may be specified as a bare name (e.g., "notme.efi"), as
-# a complete pathname (e.g., "/EFI/somedir/notme.efi"), or as a
-# complete pathname with volume (e.g., "SOMEDISK:/EFI/somedir/notme.efi"
-# or 2C17D5ED-850D-4F76-BA31-47A561740082:/EFI/somedir/notme.efi").
+# first line of the display). To be used when using a boot loader
+# that relies on support programs or drivers that are installed
+# alongside the main binary or to block certain loaders by name
+# rather than by location. Note that this will NOT prevent some
+# binaries from showing up in the second-row set of tools. Most
+# notably, various Secure Boot and recovery tools are present in
+# this list, but may appear as second-row items. The file may be
+# specified as a bare name (e.g., "notme.efi"), as a full pathname
+# (e.g., "/EFI/somedir/notme.efi"), or as a complete pathname with
+# volume (e.g., "SOMEDISK:/EFI/somedir/notme.efi" or
+# 2C17D5ED-850D-4F76-BA31-47A561740082:/EFI/somedir/notme.efi").
 # OS tags hidden via the "Delete" or "-" key in the RefindPlus
 # menu are added to this list, but stored in NVRAM.
+#
 # The default setting is shim.efi,shim-fedora.efi,shimx64.efi,PreLoader.efi,
 # TextMode.efi,ebounce.efi,GraphicsConsole.efi,MokManager.efi,HashTool.efi,
 # HashTool-signed.efi,bootmgr.efi,fb{arch}.efi
 # (where "{arch}" is the architecture code, like "x64").
 #
-# If you want to keep these defaults but add to them, be sure to
-# specify "+" as the first item in the new list; if you do not, then
+# To keep these defaults but add to them, ensure "+" is
+# specified as the first item in the new list. If not,
 # items from the default list are likely to appear.
 #
 # Inactive when commented out (Does not exclude additional files)
 #
 #dont_scan_files shim.efi,MokManager.efi
 
-# EFI NVRAM Boot#### variables that should NOT be presented as loaders
-# when "firmware" is an option to "scanfor". The comma-separated list
-# presented here contains strings that are matched against the
+# "Boot####" variables that should NOT be offered as loaders
+# when "firmware" is an option to "scanfor". The comma-separated
+# list presented here contains strings that are matched against the
 # description field -- if a value here is a case-insensitive substring
 # of the boot option description, then it will be excluded from the
 # boot list. To specify a string that includes a space, enclose it
@@ -688,25 +688,25 @@
 #
 #dont_scan_firmware HARDDISK,shell,"Removable Device"
 
-# Scan for Linux kernels that lack a ".efi" filename extension. This is
-# useful for better integration with Linux distributions that provide
+# Scan for Linux kernels that lack a ".efi" filename extension. This
+# is useful for better integration with Linux distributions that provide
 # kernels with EFI stub loaders but that do not give those kernels filenames
-# that end in ".efi", particularly if the kernels are stored on a
-# filesystem that the EFI can read. When active, this option causes all files
-# in scanned directories with names that begin with "vmlinuz", "bzImage", or
-# "kernel" to be included as loaders, even if they lack ".efi" extensions.
+# that end in ".efi", particularly if the kernels are stored on a filesystem
+# that the EFI can read. When active, this option causes all files in scanned
+# directories with names that begin with "vmlinuz", "bzImage", or "kernel" to
+# be included as loaders, even if they lack ".efi" extensions.
 #
 # Inactive when commented out (Only scans for kernels with ".efi" extensions)
 #
 #scan_all_linux_kernels
 
 # Combine all Linux kernels in a given directory into a single entry.
-# When so set, the kernel with the most recent time stamp will be launched
+# When active, the kernel with the most recent time stamp will be launched
 # by default, and its filename will appear in the entry's description.
-# To launch other kernels, the user must press F2 or Insert; alternate
-# kernels then appear as options on the sub-menu.
+# To launch other kernels, the user must press "F2" or "Insert",
+# after which alternate kernels appear as sub-menu options.
 #
-# Inactive when commented out (Kernels are not "folded" into a single menu entry).
+# Inactive when commented out (Linux kernel entries are not combined)
 #
 #fold_linux_kernels
 
