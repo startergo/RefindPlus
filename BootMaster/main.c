@@ -146,6 +146,7 @@ REFIT_CONFIG GlobalConfig = {
     /* SyncAPFS = */ FALSE,
     /* ProtectNVRAM = */ FALSE,
     /* ScanOtherESP = */ FALSE,
+    /* NormaliseCSR = */ FALSE,
     /* ShutdownAfterTimeout = */ FALSE,
     /* Install = */ FALSE,
     /* WriteSystemdVars = */ FALSE,
@@ -342,7 +343,25 @@ VOID MapSetVariable (
     RT->SetVariable                            = gRTSetVariableEx;
     gRT->SetVariable                           = gRTSetVariableEx;
     SystemTable->RuntimeServices->SetVariable  = gRTSetVariableEx;
-} // MapSetVariable()
+} // static VOID MapSetVariable()
+
+static
+VOID FilterCSR (VOID) {
+    if (GlobalConfig.NormaliseCSR) {
+        // Filter out the 'APPLE_INTERNAL' CSR bit
+        BOOLEAN FilterCSR = NormaliseCSR();
+
+        if (FilterCSR) {
+            #if REFIT_DEBUG > 0
+            CHAR16 *MsgStr = StrDuplicate (L"Normalised CSR");
+            LOG(3, LOG_LINE_NORMAL, L"%s", MsgStr);
+            MsgLog ("\n");
+            MsgLog ("    * %s", MsgStr);
+            MyFreePool (&MsgStr);
+            #endif
+        }
+    }
+} // static VOID FilterCSR()
 
 static
 VOID ActiveCSR (
@@ -421,7 +440,7 @@ VOID ActiveCSR (
             #endif
         }
     }
-} // VOID ActiveCSR()
+} // static VOID ActiveCSR()
 
 
 static
@@ -542,7 +561,7 @@ VOID SetBootArgs (
         MyFreePool (&MsgStr);
     }
     #endif
-} // VOID SetBootArgs()
+} // static VOID SetBootArgs()
 
 
 VOID DisableAMFI (
@@ -1819,6 +1838,16 @@ EFI_STATUS EFIAPI efi_main (
         MsgLog ("'Inactive'");
     }
 
+    // Show NormaliseCSR Status
+    MsgLog ("\n");
+    MsgLog ("      NormaliseCSR:- ");
+    if (GlobalConfig.NormaliseCSR) {
+        MsgLog ("'Active'");
+    }
+    else {
+        MsgLog ("'Inactive'");
+    }
+
 
     // Show TextOnly Status
     MsgLog ("\n");
@@ -2289,6 +2318,9 @@ EFI_STATUS EFIAPI efi_main (
                         ourLoaderEntry->LoaderPath
                     );
                     #endif
+
+                    // Filter out the 'APPLE_INTERNAL' CSR bit if required
+                    FilterCSR();
                 }
                 else if (MyStrStr (ourLoaderEntry->Title, L"Clover") != NULL) {
                     if (!ourLoaderEntry->UseGraphicsMode) {
@@ -2309,6 +2341,9 @@ EFI_STATUS EFIAPI efi_main (
                         ourLoaderEntry->LoaderPath
                     );
                     #endif
+
+                    // Filter out the 'APPLE_INTERNAL' CSR bit if required
+                    FilterCSR();
                 }
                 else if (MyStrStr (ourLoaderEntry->Title, L"Mac OS") != NULL) {
                     #if REFIT_DEBUG > 0
@@ -2353,6 +2388,9 @@ EFI_STATUS EFIAPI efi_main (
                             DisableCompatCheck();
                         }
                     }
+
+                    // Filter out the 'APPLE_INTERNAL' CSR bit if required
+                    FilterCSR();
 
                     // Re-Map OpenProtocol
                     ReMapOpenProtocol();

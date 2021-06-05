@@ -276,6 +276,35 @@ VOID RotateCsrValue (VOID) {
 } // VOID RotateCsrValue()
 
 
+BOOLEAN NormaliseCSR (VOID) {
+    EFI_STATUS  Status;
+    UINTN       CsrLength;
+    UINT32     *ReturnValue  = NULL;
+    EFI_GUID    CsrGuid      = APPLE_GUID;
+    BOOLEAN     FilterStatus = FALSE;
+
+    MuteLogger = TRUE;
+    Status = EfivarGetRaw (
+        &CsrGuid,
+        L"csr-active-config",
+        (CHAR8**) &ReturnValue,
+        &CsrLength
+    );
+    MuteLogger = FALSE;
+
+    if ((Status == EFI_SUCCESS) &&
+        (*ReturnValue & CSR_ALLOW_APPLE_INTERNAL) != 0
+    ) {
+        // SIP has 'APPLE_INTERNAL' bit present ... Clear the bit
+        *ReturnValue &= ~CSR_ALLOW_APPLE_INTERNAL;
+        FilterStatus  = TRUE;
+    }
+
+
+    return FilterStatus;
+} // BOOLEAN NormaliseCSR()
+
+
 /*
  * The definitions below and the SetAppleOSInfo() function are based on a GRUB patch by Andreas Heider:
  * https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html

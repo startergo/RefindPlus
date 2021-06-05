@@ -1,5 +1,9 @@
 0.13.2.AE (Pre-Release):
 -----------------------
+- Adds 'NormaliseCSR' Feature
+  * Filters out 'CSR_ALLOW_APPLE_INTERNAL' CSR bit for consumer use
+  * This allows "Over The Air" (OTA) updates on Macs in Mac OS v11.x (Big Sur)
+  * This filtering is fine on earlier versions of Mac OS which will function as usual
 - Fixes Fix Default Opaque Setting
   * Images meant to default to "opaque" were set to "transparent" instead.
   * This bug was introduced in v0.13.2.AD (Commit 0edf341)

@@ -225,6 +225,22 @@
 #
 #active_csr 1
 
+# As of Mac OS v11.x (Big Sur), the previous default SIP/SSV setttings which had all included
+# the "CSR_ALLOW_APPLE_INTERNAL" bit may leave Macs not able to receive "Over The Air" (OTA)
+# updates from Apple. Mac OS v11.x (Big Sur) removes this bit on boot if detected but this
+# attempted removal may fail when booting into Mac OS via non-standard path ways such as
+# RefindPlus. It is also possible that Apple will remove this remediation feature once
+# Mac models supporting Mac OS v10.15 (Catalina) are deemed by Apple to be obsolete.
+# When this token is set, RefindPlus will remove this bit from the saved CSR bits
+# when booting into Mac OS, OpenCore or Clover similar to the process undertaken
+# in Mac OS v11.x (Big Sur). This token should be activated whenever Mac OS is
+# required, either directly via RefindPlus or indirectly via other tools such
+# as OpenCore and Clover, even when Mac OS v11.x (Big Sur) is not required.
+#
+# Inactive when commented out (Takes no action on "APPLE_INTERNAL" bit)
+#
+#normalise_csr
+
 # Set arbitrary boot arguments on Mac OS. When this option is active,
 # RefindPlus will change the Mac OS boot arguments to the specified string.
 # This setting only applies to Mac OS and accounts for arguments injected by
@@ -376,6 +392,9 @@
 # the stored CSR value in the NVRAM. RefindPlus can clear the CSR
 # value when "0" is used in place of "10" for the "OFF" value.
 # This setting is also valid on earlier versions of Mac OS.
+# It is recommended however, to maintain the default "OFF"
+# setting of "10", and to use the "normalise_csr" token
+# instead, to comprehensively achieve the same end.
 #   CSR_ALLOW_UNTRUSTED_KEXTS               0x0001
 #   CSR_ALLOW_UNRESTRICTED_FS               0x0002
 #   CSR_ALLOW_TASK_FOR_PID                  0x0004
@@ -391,7 +410,7 @@
 #
 # Inactive when commented out (CSR values for SIP/SSV cannot be set)
 #
-#csr_values 0,77
+#csr_values 10,77
 
 
 ##--------------------------------------------------------------##
