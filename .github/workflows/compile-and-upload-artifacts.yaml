@@ -18,10 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 2.7
-        uses: actions/setup-python@v4
-        with:
-          python-version: '2.7'
+      - name: Install Python 2.7
+        run: |
+          curl -O https://www.python.org/ftp/python/2.7.18/python-2.7.18-macosx10.9.pkg
+          sudo installer -pkg python-2.7.18-macosx10.9.pkg -target /
 
       - name: Install Xcode Command Line Tools
         run: |
