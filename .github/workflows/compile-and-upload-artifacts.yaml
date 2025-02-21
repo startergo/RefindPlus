@@ -1,6 +1,7 @@
 name: Build and Upload Artifacts for RefindPlus
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - GOPFix
