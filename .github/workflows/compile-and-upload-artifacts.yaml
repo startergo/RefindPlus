@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - GOPFix
+      - test-changes
   pull_request:
     branches:
-      - GOPFix
+      - test-changes
 
 jobs:
   build-macos:
@@ -30,12 +30,12 @@ jobs:
       - name: Set up build environment
         run: |
           if [[ "${PATH}" != *"/usr/local/bin"* ]] ; then export PATH="/usr/local/bin:${PATH}"; fi
-          brew install nasm && brew upgrade nasm
-          brew install acpica && brew upgrade acpica
-          brew install ocmtoc && brew upgrade ocmtoc
-          brew install binutils && brew upgrade binutils
+          brew install nasm
+          brew install acpica
+          brew install ocmtoc
+          brew install binutils
 
-      - name: Fork and clone RefindPlusUDK repository
+      - name: Clone RefindPlusUDK repository
         run: |
           mkdir -p edk2
           git clone https://github.com/${{ github.repository_owner }}/RefindPlusUDK.git edk2
@@ -47,7 +47,7 @@ jobs:
         run: |
           cd edk2/000-BuildScript
           chmod +x RefindPlusBuilder.sh
-          sh RefindPlusBuilder.sh GOPFix
+          sh RefindPlusBuilder.sh test-changes
 
       - name: Archive build artifacts
         if: success()
