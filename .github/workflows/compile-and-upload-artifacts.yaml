@@ -1,0 +1,56 @@
+name: Build and Upload Artifacts for RefindPlus
+
+on:
+  push:
+    branches:
+      - GOPFix
+  pull_request:
+    branches:
+      - GOPFix
+
+jobs:
+  build-macos:
+    name: Build on macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 2.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: '2.7'
+
+      - name: Install Xcode Command Line Tools
+        run: |
+          xcode-select --install || true
+
+      - name: Set up build environment
+        run: |
+          if [[ "${PATH}" != *"/usr/local/bin"* ]] ; then export PATH="/usr/local/bin:${PATH}"; fi
+          brew install nasm && brew upgrade nasm
+          brew install acpica && brew upgrade acpica
+          brew install ocmtoc && brew upgrade ocmtoc
+          brew install binutils && brew upgrade binutils
+
+      - name: Fork and clone RefindPlusUDK repository
+        run: |
+          mkdir -p edk2
+          git clone https://github.com/${{ github.repository_owner }}/RefindPlusUDK.git edk2
+          cd edk2
+          git checkout rudk
+          git remote add upstream https://github.com/dakanji/RefindPlusUDK.git
+
+      - name: Run Build Script
+        run: |
+          cd edk2/000-BuildScript
+          chmod +x RefindPlusBuilder.sh
+          sh RefindPlusBuilder.sh GOPFix
+
+      - name: Archive build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refindplus-artifacts
+          path: RefindPlusPkg/Build
