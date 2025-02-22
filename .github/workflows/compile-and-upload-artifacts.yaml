@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - test-changes
+      - GOPFix
   pull_request:
     branches:
-      - test-changes
+      - GOPFix
 
 jobs:
   build-macos:
@@ -44,7 +44,7 @@ jobs:
           cd ~/Documents/RefindPlus
           git clone https://github.com/${{ github.repository_owner }}/RefindPlus.git Working
           cd Working
-          git checkout test-changes
+          git checkout GOPFix
           git remote add upstream https://github.com/dakanji/RefindPlus.git
 
       - name: Clone RefindPlusUDK repository
@@ -59,7 +59,7 @@ jobs:
       - name: Sync repositories
         run: |
           cd ~/Documents/RefindPlus/Working
-          git pull upstream test-changes
+          git pull upstream GOPFix
           cd ~/Documents/RefindPlus/edk2
           git pull upstream rudk
 
@@ -69,7 +69,7 @@ jobs:
         run: |
           cd ~/Documents/RefindPlus/edk2/000-BuildScript
           chmod +x RefindPlusBuilder.sh
-          sh RefindPlusBuilder.sh test-changes
+          sh RefindPlusBuilder.sh GOPFix
 
       - name: Archive build artifacts
         if: success()
