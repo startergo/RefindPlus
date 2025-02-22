@@ -35,9 +35,21 @@ jobs:
           brew install ocmtoc
           brew install binutils
 
+      - name: Set up directory structure
+        run: |
+          mkdir -p ~/Documents/RefindPlus
+
+      - name: Clone RefindPlus repository
+        run: |
+          cd ~/Documents/RefindPlus
+          git clone https://github.com/${{ github.repository_owner }}/RefindPlus.git Working
+          cd Working
+          git checkout test-changes
+          git remote add upstream https://github.com/dakanji/RefindPlus.git
+
       - name: Clone RefindPlusUDK repository
         run: |
-          mkdir -p edk2
+          cd ~/Documents/RefindPlus
           git clone https://github.com/${{ github.repository_owner }}/RefindPlusUDK.git edk2
           cd edk2
           git checkout rudk
@@ -47,7 +59,7 @@ jobs:
         env:
           TERM: xterm
         run: |
-          cd edk2/000-BuildScript
+          cd ~/Documents/RefindPlus/edk2/000-BuildScript
           chmod +x RefindPlusBuilder.sh
           sh RefindPlusBuilder.sh test-changes
 
@@ -56,4 +68,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: refindplus-artifacts
-          path: RefindPlusPkg/Build
+          path: ~/Documents/RefindPlus/Working/RefindPlusPkg/Build
