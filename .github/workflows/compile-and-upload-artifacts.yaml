@@ -44,6 +44,8 @@ jobs:
           git remote add upstream https://github.com/dakanji/RefindPlusUDK.git
 
       - name: Run Build Script
+        env:
+          TERM: xterm
         run: |
           cd edk2/000-BuildScript
           chmod +x RefindPlusBuilder.sh
