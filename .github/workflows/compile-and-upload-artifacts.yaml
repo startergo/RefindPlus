@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - GOPFix
+      - test-changes
   pull_request:
     branches:
-      - GOPFix
+      - test-changes
 
 jobs:
   build-macos:
