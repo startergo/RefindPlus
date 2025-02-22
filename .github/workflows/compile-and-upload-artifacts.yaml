@@ -54,6 +54,14 @@ jobs:
           cd edk2
           git checkout rudk
           git remote add upstream https://github.com/dakanji/RefindPlusUDK.git
+          git pull upstream rudk
+
+      - name: Sync repositories
+        run: |
+          cd ~/Documents/RefindPlus/Working
+          git pull upstream test-changes
+          cd ~/Documents/RefindPlus/edk2
+          git pull upstream rudk
 
       - name: Run Build Script
         env:
