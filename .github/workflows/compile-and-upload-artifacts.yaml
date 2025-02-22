@@ -71,9 +71,24 @@ jobs:
           chmod +x RefindPlusBuilder.sh
           sh RefindPlusBuilder.sh GOPFix
 
-      - name: Archive build artifacts
+      - name: Archive DEBUG build artifacts
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: refindplus-artifacts
-          path: ~/Documents/RefindPlus/Working/RefindPlusPkg/Build
+          name: refindplus-artifacts-debug
+          path: ~/Documents/RefindPlus/edk2/Build/RefindPlus/DEBUG_XCODE5
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
+
+      - name: Archive RELEASE build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refindplus-artifacts-release
+          path: ~/Documents/RefindPlus/edk2/Build/RefindPlus/RELEASE_XCODE5
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
